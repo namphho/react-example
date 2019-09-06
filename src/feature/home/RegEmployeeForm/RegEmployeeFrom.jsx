@@ -3,6 +3,17 @@ import { Segment, Form, Button, Grid } from "semantic-ui-react";
 import BossList from "./BossList";
 
 class RegEmployeeFrom extends Component {
+  state = {
+      selectedPos: 0
+  };
+
+  handleSelect = (pos) => {
+      console.log(pos);
+      this.setState({
+        selectedPos : pos
+      })
+  }
+
   render() {
     return (
       <div>
@@ -34,7 +45,7 @@ class RegEmployeeFrom extends Component {
             </Segment>
           </Grid.Column>
           <Grid.Column width={6}>
-                <BossList/>
+            <BossList selectedPos={this.state.selectedPos} handleSelectEvent={this.handleSelect}/>
           </Grid.Column>
         </Grid>
       </div>
