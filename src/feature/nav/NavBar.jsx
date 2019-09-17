@@ -15,7 +15,7 @@ class NavBar extends Component {
           </Menu.Item>
           <Menu.Item  as={NavLink} exact to="/boss" name="DANG KY CHU" />
           <Menu.Item  as={NavLink} to="/employee" name="DANG KY NHAN VIEN" />
-          
+          <Menu.Item  as={NavLink} to="/test" name="Test" />
         </Container>
 
       </Menu>
