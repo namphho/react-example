@@ -1,6 +1,17 @@
 import React, { Component } from "react";
 import { Segment, Form, Button, Grid } from "semantic-ui-react";
 import BossList from "./BossList";
+import {Field, reduxForm} from "redux-form";
+import TextInput from "../../../app/common/form/TextInput";
+import {combineValidators, isRequired} from "revalidate";
+
+
+const validate = combineValidators({
+  name: isRequired({message: 'Vui lòng nhập họ và tên'}),
+  description: isRequired({message: 'Vui lòng nhập mô tả'}),
+  email: isRequired({message: 'Vui lòng nhập email'}),
+  pass: isRequired({message: 'Vui lòng nhập mật khẩu'}),
+})
 
 class RegEmployeeFrom extends Component {
   state = {
@@ -14,30 +25,24 @@ class RegEmployeeFrom extends Component {
       })
   }
 
+  onFormSubmit = values => {
+    console.log(values);
+  }
+
   render() {
+    const {invalid, submitting, pristine} = this.props;
     return (
       <div>
         <Grid>
           <Grid.Column width={10}>
             <Segment>
-              <Form autoComplete="off">
-                <Form.Field>
-                  <label>Tên Nhân Viên</label>
-                  <input name="name" placeholder="may1" />
-                </Form.Field>
-                <Form.Field>
-                  <label>Mô Tả</label>
-                  <input name="description" placeholder="mô tả" />
-                </Form.Field>
-                <Form.Field>
-                  <label>Email</label>
-                  <input name="email" placeholder="email" />
-                </Form.Field>
-                <Form.Field>
-                  <label>Mật khẩu</label>
-                  <input name="hosted" placeholder="mật khẩu" />
-                </Form.Field>
-                <Button positive type="submit">
+              <Form onSubmit={this.props.handleSubmit(this.onFormSubmit)} autoComplete="off">
+                <Field name="name" component={TextInput} title="Tên Nhân Viên" placeholder="may1"/>
+                <Field name="description" component={TextInput} title="Mô Tả" placeholder="mô Tả"/>
+                <Field name="email" component={TextInput} title="Email" placeholder="email"/>
+                <Field name="pass" component={TextInput} title="Mật khẩu" placeholder="mật khẩu"/>
+              
+                <Button disabled={invalid || submitting || pristine} positive type="submit">
                   Lưu
                 </Button>
                 <Button type="button">clear</Button>
@@ -52,4 +57,4 @@ class RegEmployeeFrom extends Component {
     );
   }
 }
-export default RegEmployeeFrom;
+export default reduxForm({form: "employee", validate})(RegEmployeeFrom);
