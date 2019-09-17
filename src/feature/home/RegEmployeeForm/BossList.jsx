@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { List, Button, Image } from "semantic-ui-react";
+import { List} from "semantic-ui-react";
 import BossItem from "./BossItem";
 
 const data = [
