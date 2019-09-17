@@ -1,10 +1,12 @@
 import React, { Component } from "react";
-import { Segment, Form, Button } from "semantic-ui-react";
+import { Segment, Form, Button, Grid } from "semantic-ui-react";
 
 class RegBossForm extends Component {
   render() {
     return (
-      <Segment>
+      <Grid>
+        <Grid.Column width = {10}>
+        <Segment>
         <Form autoComplete="off">
           <Form.Field>
             <label>Tên Khách hàng</label>
@@ -28,6 +30,9 @@ class RegBossForm extends Component {
           <Button type="button">clear</Button>
         </Form>
       </Segment>
+        </Grid.Column>
+      </Grid>
+      
     );
   }
 }
