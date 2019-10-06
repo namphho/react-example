@@ -1,8 +1,11 @@
 import React, { Component } from "react";
 import { Segment, Form, Button, Grid } from "semantic-ui-react";
-import { Field, reduxForm } from "redux-form";
+import { Field, reduxForm, untouch,change } from "redux-form";
 import TextInput from "./../../../app/common/form/TextInput";
 import {combineValidators, isRequired} from "revalidate";
+import {createOwner} from "../RegActions"
+import {connect} from 'react-redux';
+import { isFulfilled } from "q";
 
 const validate = combineValidators({
   name: isRequired({message: 'Vui lòng nhập họ và tên'}),
@@ -11,13 +14,51 @@ const validate = combineValidators({
   pass: isRequired({message: 'Vui lòng nhập mật khẩu'}),
 })
 
+const mapStateToProps = (state) => ({
+  data : state.register,
+  boss: state.form.boss
+})
+
+const mapDispatchToProps = {
+  createOwner
+}
+
 class RegBossForm extends Component {
   onFormSubmit = values => {
-    console.log(values);
+    console.log(values.name);
+    console.log(values.description);
+    console.log(values.email);
+    console.log(values.pass);
+    this.props.createOwner({
+      email: values.email,
+      description: values.description,
+      name: values.name,
+      password: values.pass,
+    })
+    //reset the field's error
+    this.resetFields('boss', {
+      email: '',
+      pass: '',
+      name: '',
+      description: ''
+    });
   };
 
+  //reset the respective fields's value with the error if any after
+resetFields = (formName, fieldsObj) => {
+  Object.keys(fieldsObj).forEach(fieldKey => {
+
+      //reset the field's value
+      this.props.dispatch(change(formName, fieldKey, fieldsObj[fieldKey]));
+
+      //reset the field's error
+      this.props.dispatch(untouch(formName, fieldKey));
+
+  });
+}
+
   render() {
-    const {invalid, submitting, pristine} = this.props;
+    const {invalid, submitting, pristine, data} = this.props;
     return (
       <Grid>
         <Grid.Column width={10}>
@@ -69,5 +110,5 @@ class RegBossForm extends Component {
     );
   }
 }
-export default reduxForm({ form: "boss", validate })(RegBossForm);
+export default connect(mapStateToProps, mapDispatchToProps)(reduxForm({ form: "boss", validate })(RegBossForm));
 //boss is a unique name for the form

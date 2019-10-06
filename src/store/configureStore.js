@@ -1,8 +1,20 @@
-import {createStore} from "redux";
-import {devToolsEnhancer} from 'redux-devtools-extension';
+import { createStore, applyMiddleware } from "redux";
+import { composeWithDevTools } from "redux-devtools-extension";
 import rootReducer from "../reducers/rootReducer";
+import thunk from "redux-thunk";
+import { reactReduxFirebase, getFirebase } from "react-redux-firebase";
+import firebase from "../app/firebase/firebase";
+
+const rrfConfig = {
+  attachAuthIsReady: true
+};
 
 export const configureStore = () => {
-    const store = createStore(rootReducer, devToolsEnhancer());
-    return store;
-}
+  const middlewares = [thunk.withExtraArgument({ getFirebase })];
+  const composeEnhancer = composeWithDevTools(
+    applyMiddleware(...middlewares),
+    reactReduxFirebase(firebase, rrfConfig)
+  );
+  const store = createStore(rootReducer, composeEnhancer);
+  return store;
+};
