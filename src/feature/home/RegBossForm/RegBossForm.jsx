@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import { Segment, Form, Button, Grid } from "semantic-ui-react";
-import { Field, reduxForm, untouch,change } from "redux-form";
+import { Field, reduxForm} from "redux-form";
 import TextInput from "./../../../app/common/form/TextInput";
 import {combineValidators, isRequired} from "revalidate";
 import {createOwner} from "../RegActions"
 import {connect} from 'react-redux';
-import { isFulfilled } from "q";
+import { resetFields } from "../FormUtils";
 
 const validate = combineValidators({
   name: isRequired({message: 'Vui lòng nhập họ và tên'}),
@@ -36,7 +36,7 @@ class RegBossForm extends Component {
       password: values.pass,
     })
     //reset the field's error
-    this.resetFields('boss', {
+    resetFields(this.props, 'boss', {
       email: '',
       pass: '',
       name: '',
@@ -44,21 +44,10 @@ class RegBossForm extends Component {
     });
   };
 
-  //reset the respective fields's value with the error if any after
-resetFields = (formName, fieldsObj) => {
-  Object.keys(fieldsObj).forEach(fieldKey => {
 
-      //reset the field's value
-      this.props.dispatch(change(formName, fieldKey, fieldsObj[fieldKey]));
-
-      //reset the field's error
-      this.props.dispatch(untouch(formName, fieldKey));
-
-  });
-}
 
   render() {
-    const {invalid, submitting, pristine, data} = this.props;
+    const {invalid, submitting, pristine} = this.props;
     return (
       <Grid>
         <Grid.Column width={10}>

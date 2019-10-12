@@ -1,5 +1,3 @@
-import firebase from 'firebase/app';
-
 export const INCREMENT_COUNTER = "increment_counter";
 export const DECREMENT_COUNTER = "decrement_counter";
 
@@ -30,7 +28,6 @@ export const registerNewAccount = (credentials) => {
     return async (dispatch, getState, {getFirebase}) => {
         try {
             const firebaseApi = getFirebase();
-            const {firebase} = getState();
             //const credentials = ;
             const userData =  await firebaseApi.createUser({
                 email: "test_21@test.com",

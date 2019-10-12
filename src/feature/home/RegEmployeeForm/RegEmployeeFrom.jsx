@@ -4,7 +4,9 @@ import BossList from "./BossList";
 import {Field, reduxForm} from "redux-form";
 import TextInput from "../../../app/common/form/TextInput";
 import {combineValidators, isRequired} from "revalidate";
-
+import {createEmployee} from "../RegActions"
+import { connect } from "react-redux";
+import { resetFields } from "../FormUtils";
 
 const validate = combineValidators({
   name: isRequired({message: 'Vui lòng nhập họ và tên'}),
@@ -12,6 +14,16 @@ const validate = combineValidators({
   email: isRequired({message: 'Vui lòng nhập email'}),
   pass: isRequired({message: 'Vui lòng nhập mật khẩu'}),
 })
+
+
+const mapStateToProps = (state) => ({
+  ownerProfiles : state.register.ownerProfiles,
+  boss: state.form.employee
+})
+
+const mapDispatchToProps = {
+  createEmployee
+}
 
 class RegEmployeeFrom extends Component {
   state = {
@@ -27,10 +39,22 @@ class RegEmployeeFrom extends Component {
 
   onFormSubmit = values => {
     console.log(values);
+    this.props.createEmployee({
+      email: values.email,
+      description: values.description,
+      name: values.name,
+      password: values.pass,
+    })
+    resetFields(this.props, 'employee', {
+      email: '',
+      pass: '',
+      name: '',
+      description: ''
+    })
   }
 
   render() {
-    const {invalid, submitting, pristine} = this.props;
+    const {invalid, submitting, pristine, ownerProfiles} = this.props;
     return (
       <div>
         <Grid>
@@ -50,11 +74,11 @@ class RegEmployeeFrom extends Component {
             </Segment>
           </Grid.Column>
           <Grid.Column width={6}>
-            <BossList selectedPos={this.state.selectedPos} handleSelectEvent={this.handleSelect}/>
+            <BossList selectedPos={this.state.selectedPos} ownerProfiles={ownerProfiles} handleSelectEvent={this.handleSelect}/>
           </Grid.Column>
         </Grid>
       </div>
     );
   }
 }
-export default reduxForm({form: "employee", validate})(RegEmployeeFrom);
+export default connect(mapStateToProps, mapDispatchToProps)(reduxForm({form: "employee", validate})(RegEmployeeFrom));
