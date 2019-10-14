@@ -7,7 +7,8 @@ import {
   EMPLOYEE_KEY,
   CREATE_OWNER,
   CREATE_EMPLOYEE,
-  GET_OWNER_PROFILE
+  GET_OWNER_PROFILE,
+  UPDATE_OWNER_KEY_FOR_EMPLOYEE
 } from "./RegConstants";
 
 export const createOwner = cred => {
@@ -51,12 +52,32 @@ export const createEmployee = cred => {
       Object.keys(ownerProfiles.data).forEach(key => {
         array.push({ ...ownerProfiles.data[key], id: key });
       });
-      console.log(array);
       dispatch({
         type: GET_OWNER_PROFILE,
         payload: {
           data: array
         }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
+export const updateOwnerKeyForEmployee = pos => {
+  return async (dispatch, getState, { getFirebase }) => {
+    try {
+      const firebaseApi = getFirebase();
+      const {firebase, register} = getState();
+      console.log(`employeeId=${firebase.auth.uid}`);
+      console.log(`ownerId=${register.ownerProfiles[pos].id}`);
+      const result = await firebaseApi.update(
+        `/${EMPLOYEE_KEY}/${firebase.auth.uid}`,
+        { ownerKey: register.ownerProfiles[pos].id}
+      );
+      console.log(result);
+      dispatch({
+        type: UPDATE_OWNER_KEY_FOR_EMPLOYEE,
       });
     } catch (error) {
       console.log(error);

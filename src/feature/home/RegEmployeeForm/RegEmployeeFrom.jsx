@@ -4,7 +4,7 @@ import BossList from "./BossList";
 import {Field, reduxForm} from "redux-form";
 import TextInput from "../../../app/common/form/TextInput";
 import {combineValidators, isRequired} from "revalidate";
-import {createEmployee} from "../RegActions"
+import {createEmployee, updateOwnerKeyForEmployee} from "../RegActions"
 import { connect } from "react-redux";
 import { resetFields } from "../FormUtils";
 
@@ -22,7 +22,8 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = {
-  createEmployee
+  createEmployee,
+  updateOwnerKeyForEmployee
 }
 
 class RegEmployeeFrom extends Component {
@@ -32,9 +33,11 @@ class RegEmployeeFrom extends Component {
 
   handleSelect = (pos) => {
       console.log(pos);
+      //update employee key
       this.setState({
         selectedPos : pos
       })
+      this.props.updateOwnerKeyForEmployee(this.state.selectedPos);
   }
 
   onFormSubmit = values => {

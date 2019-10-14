@@ -1,6 +1,7 @@
 export const CREATE_OWNER = "create_owner";
 export const CREATE_EMPLOYEE = "create_employee";
 export const GET_OWNER_PROFILE = "get_owner_profile";
+export const UPDATE_OWNER_KEY_FOR_EMPLOYEE = "update_owner_for_employee";
 
 export const OWNER_KEY = "Owners";
 export const EMPLOYEE_KEY = "Employees";
