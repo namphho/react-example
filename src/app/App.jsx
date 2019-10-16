@@ -6,18 +6,20 @@ import { Route } from "react-router-dom";
 import RegBossForm from "../feature/home/RegBossForm/RegBossForm";
 import RegEmployeeFrom from "../feature/home/RegEmployeeForm/RegEmployeeFrom";
 import testComponent from "../feature/testarea/testComponent";
+import ModalManager from "../feature/modal/ModalManager";
 
 class App extends Component {
   render() {
     return (
       <Fragment>
-      <NavBar />
-      <Container className="main">
-        <Route path="/boss" component={RegBossForm} />
-        <Route path="/employee" component={RegEmployeeFrom} />
-        <Route path="/test" component={testComponent} />
-      </Container>
-    </Fragment>
+        <ModalManager/>
+        <NavBar />
+        <Container className="main">
+          <Route path="/boss" component={RegBossForm} />
+          <Route path="/employee" component={RegEmployeeFrom} />
+          <Route path="/test" component={testComponent} />
+        </Container>
+      </Fragment>
     );
   }
 }

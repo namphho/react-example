@@ -7,6 +7,7 @@ import {combineValidators, isRequired} from "revalidate";
 import {createEmployee, updateOwnerKeyForEmployee} from "../RegActions"
 import { connect } from "react-redux";
 import { resetFields } from "../FormUtils";
+import {openModal} from "../../modal/modalActions";
 
 const validate = combineValidators({
   name: isRequired({message: 'Vui lòng nhập họ và tên'}),
@@ -23,21 +24,14 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   createEmployee,
-  updateOwnerKeyForEmployee
+  updateOwnerKeyForEmployee,
+  openModal,
 }
 
 class RegEmployeeFrom extends Component {
-  state = {
-      selectedPos: 0
-  };
 
   handleSelect = (pos) => {
-      console.log(pos);
-      //update employee key
-      this.setState({
-        selectedPos : pos
-      })
-      this.props.updateOwnerKeyForEmployee(this.state.selectedPos);
+      this.props.openModal('ConfirmModal', {ownerId: `${pos}`});
   }
 
   onFormSubmit = values => {
@@ -77,7 +71,7 @@ class RegEmployeeFrom extends Component {
             </Segment>
           </Grid.Column>
           <Grid.Column width={6}>
-            <BossList selectedPos={this.state.selectedPos} ownerProfiles={ownerProfiles} handleSelectEvent={this.handleSelect}/>
+            <BossList ownerProfiles={ownerProfiles} handleSelectEvent={this.handleSelect}/>
           </Grid.Column>
         </Grid>
       </div>

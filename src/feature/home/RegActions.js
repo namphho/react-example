@@ -10,6 +10,8 @@ import {
   GET_OWNER_PROFILE,
   UPDATE_OWNER_KEY_FOR_EMPLOYEE
 } from "./RegConstants";
+import {toastr} from 'react-redux-toastr';
+import { MODAL_CLOSE } from "../modal/modelConstants";
 
 export const createOwner = cred => {
   return async (dispatch, getState, { getFirebase }) => {
@@ -25,8 +27,10 @@ export const createOwner = cred => {
       await firebaseApi.set(path, data);
       await firebaseApi.logout();
       dispatch({ type: CREATE_OWNER });
+      toastr.success('Thành công', 'Tạo tài khoản OWNER thành công');
     } catch (error) {
       console.log(error);
+      toastr.error('Thất Bại', `${error}`);
     }
   };
 };
@@ -52,6 +56,7 @@ export const createEmployee = cred => {
       Object.keys(ownerProfiles.data).forEach(key => {
         array.push({ ...ownerProfiles.data[key], id: key });
       });
+      toastr.success('Thành công', 'Đã tạo tài khoản NHÂN VIÊN thành công');
       dispatch({
         type: GET_OWNER_PROFILE,
         payload: {
@@ -60,27 +65,34 @@ export const createEmployee = cred => {
       });
     } catch (error) {
       console.log(error);
+      toastr.error('Thất Bại', `${error}`);
     }
   };
 };
 
-export const updateOwnerKeyForEmployee = pos => {
+export const updateOwnerKeyForEmployee = ownerId => {
   return async (dispatch, getState, { getFirebase }) => {
     try {
       const firebaseApi = getFirebase();
-      const {firebase, register} = getState();
+      const {firebase} = getState();
       console.log(`employeeId=${firebase.auth.uid}`);
-      console.log(`ownerId=${register.ownerProfiles[pos].id}`);
+      console.log(`ownerId=${ownerId}`);
       const result = await firebaseApi.update(
         `/${EMPLOYEE_KEY}/${firebase.auth.uid}`,
-        { ownerKey: register.ownerProfiles[pos].id}
+        { ownerKey: ownerId}
       );
       console.log(result);
       dispatch({
         type: UPDATE_OWNER_KEY_FOR_EMPLOYEE,
       });
+      dispatch({
+        type: MODAL_CLOSE,
+      })
+      toastr.success('Thành công', 'Đã liên kết tài khoản nhân viên vào tài khoản chủ');
+      await firebaseApi.logout();
     } catch (error) {
       console.log(error);
+      toastr.error('Thất Bại', `${error}`);
     }
   };
 };
