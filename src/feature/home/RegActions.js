@@ -112,7 +112,7 @@ const generateOwnerPath = uuid => {
 
 const generateEmployeeData = cred => {
   return {
-    [KEY_EMAIL]: cred.name,
+    [KEY_EMAIL]: cred.email,
     [KEY_ACTIVATED]: true,
     [KEY_DESCRIPTION]: cred.description,
     [KEY_NAME]: cred.name
