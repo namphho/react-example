@@ -12,6 +12,7 @@ import {
 } from "./RegConstants";
 import {toastr} from 'react-redux-toastr';
 import { MODAL_CLOSE } from "../modal/modelConstants";
+import { firebaseConnect } from 'react-redux-firebase'
 
 export const createOwner = cred => {
   return async (dispatch, getState, { getFirebase }) => {
@@ -47,11 +48,17 @@ export const createEmployee = cred => {
       const data = generateEmployeeData(cred);
       await firebaseApi.set(path, data);
       dispatch({ type: CREATE_EMPLOYEE });
-      //todo get owner list
+      //get owner list
       const ownerProfiles = await firebaseApi.watchEvent(
         "once",
-        `/${OWNER_KEY}`
+        `/${OWNER_KEY}`,
+        'nam',
+        {
+          isQuery: true,
+          queryParams: [ 'notParsed','orderByChild=email', 'equalTo=nam.phho.hooray@gmail.com' ] 
+        }
       );
+      console.log(ownerProfiles);
       const array = [];
       Object.keys(ownerProfiles.data).forEach(key => {
         array.push({ ...ownerProfiles.data[key], id: key });
@@ -96,6 +103,22 @@ export const updateOwnerKeyForEmployee = ownerId => {
     }
   };
 };
+
+export const searchOwner = pattern => {
+    return async (dispatch, getState, {getFirebase}) => {
+      try {
+        const firebaseApi = getFirebase();
+        //search owner profiles
+        const ownerProfiles = await firebaseApi.watchEvent(
+          "once",
+          `/${OWNER_KEY}#orderByChild=${pattern}`,
+        );
+        //set owner profiles state
+      } catch (error){
+        toastr.error('Thất Bại', `${error}`);
+      }
+    }
+}
 
 const generateOwnerData = cred => {
   return {
