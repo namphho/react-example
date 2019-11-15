@@ -10,9 +10,8 @@ import {
   GET_OWNER_PROFILE,
   UPDATE_OWNER_KEY_FOR_EMPLOYEE
 } from "./RegConstants";
-import {toastr} from 'react-redux-toastr';
+import { toastr } from "react-redux-toastr";
 import { MODAL_CLOSE } from "../modal/modelConstants";
-import { firebaseConnect } from 'react-redux-firebase'
 
 export const createOwner = cred => {
   return async (dispatch, getState, { getFirebase }) => {
@@ -28,10 +27,10 @@ export const createOwner = cred => {
       await firebaseApi.set(path, data);
       await firebaseApi.logout();
       dispatch({ type: CREATE_OWNER });
-      toastr.success('Thành công', 'Tạo tài khoản OWNER thành công');
+      toastr.success("Thành công", "Tạo tài khoản OWNER thành công");
     } catch (error) {
       console.log(error);
-      toastr.error('Thất Bại', `${error}`);
+      toastr.error("Thất Bại", `${error}`);
     }
   };
 };
@@ -48,77 +47,78 @@ export const createEmployee = cred => {
       const data = generateEmployeeData(cred);
       await firebaseApi.set(path, data);
       dispatch({ type: CREATE_EMPLOYEE });
-      //get owner list
-      const ownerProfiles = await firebaseApi.watchEvent(
-        "once",
-        `/${OWNER_KEY}`,
-        'nam',
-        {
-          isQuery: true,
-          queryParams: [ 'notParsed','orderByChild=email', 'equalTo=nam.phho.hooray@gmail.com' ] 
-        }
-      );
-      console.log(ownerProfiles);
-      const array = [];
-      Object.keys(ownerProfiles.data).forEach(key => {
-        array.push({ ...ownerProfiles.data[key], id: key });
-      });
-      toastr.success('Thành công', 'Đã tạo tài khoản NHÂN VIÊN thành công');
-      dispatch({
-        type: GET_OWNER_PROFILE,
-        payload: {
-          data: array
-        }
-      });
+      toastr.success("Thành công", "Đã tạo tài khoản NHÂN VIÊN thành công");
     } catch (error) {
       console.log(error);
-      toastr.error('Thất Bại', `${error}`);
+      toastr.error("Thất Bại", `${error}`);
     }
   };
 };
 
-export const updateOwnerKeyForEmployee = ownerId => {
+export const updateOwnerKeyForEmployee = ownerProfile => {
   return async (dispatch, getState, { getFirebase }) => {
     try {
       const firebaseApi = getFirebase();
-      const {firebase} = getState();
-      console.log(`employeeId=${firebase.auth.uid}`);
-      console.log(`ownerId=${ownerId}`);
-      const result = await firebaseApi.update(
+      const { firebase } = getState();
+      await firebaseApi.update(
         `/${EMPLOYEE_KEY}/${firebase.auth.uid}`,
-        { ownerKey: ownerId}
+        { ownerKey: ownerProfile.id }
       );
-      console.log(result);
       dispatch({
-        type: UPDATE_OWNER_KEY_FOR_EMPLOYEE,
+        type: UPDATE_OWNER_KEY_FOR_EMPLOYEE
       });
       dispatch({
-        type: MODAL_CLOSE,
-      })
-      toastr.success('Thành công', 'Đã liên kết tài khoản nhân viên vào tài khoản chủ');
+        type: MODAL_CLOSE
+      });
+      toastr.success(
+        "Thành công",
+        "Đã liên kết tài khoản nhân viên vào tài khoản chủ"
+      );
       await firebaseApi.logout();
     } catch (error) {
       console.log(error);
-      toastr.error('Thất Bại', `${error}`);
+      toastr.error("Thất Bại", `${error}`);
     }
   };
 };
 
 export const searchOwner = pattern => {
-    return async (dispatch, getState, {getFirebase}) => {
-      try {
-        const firebaseApi = getFirebase();
-        //search owner profiles
-        const ownerProfiles = await firebaseApi.watchEvent(
-          "once",
-          `/${OWNER_KEY}#orderByChild=${pattern}`,
-        );
-        //set owner profiles state
-      } catch (error){
-        toastr.error('Thất Bại', `${error}`);
-      }
+  return async (dispatch, getState, { getFirebase }) => {
+    try {
+      const firebaseApi = getFirebase();
+      //search owner profiles
+      //get owner list
+      const ownerProfiles = await firebaseApi.watchEvent(
+        "once",
+        `/${OWNER_KEY}`,
+        "nam",
+        {
+          isQuery: true,
+          queryParams: [
+            "notParsed",
+            "orderByChild=email",
+          ]
+        }
+      );
+      const array = [];
+      Object.keys(ownerProfiles.data).forEach(key => {
+        array.push({ ...ownerProfiles.data[key], id: key });
+      });
+      const filteredProfiles = array.filter(profiles => {
+          return profiles.email.includes(pattern);
+      });
+      //set owner profiles state
+      dispatch({
+        type: GET_OWNER_PROFILE,
+        payload: {
+          data: filteredProfiles
+        }
+      });
+    } catch (error) {
+      toastr.error("Thất Bại", `${error}`);
     }
-}
+  };
+};
 
 const generateOwnerData = cred => {
   return {

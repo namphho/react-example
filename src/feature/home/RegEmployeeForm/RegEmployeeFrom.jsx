@@ -1,10 +1,9 @@
 import React, { Component } from "react";
 import { Segment, Form, Button, Grid, Search } from "semantic-ui-react";
-import BossList from "./BossList";
 import { Field, reduxForm } from "redux-form";
 import TextInput from "../../../app/common/form/TextInput";
 import { combineValidators, isRequired } from "revalidate";
-import { createEmployee, updateOwnerKeyForEmployee } from "../RegActions";
+import { createEmployee, updateOwnerKeyForEmployee, searchOwner } from "../RegActions";
 import { connect } from "react-redux";
 import { resetFields } from "../FormUtils";
 import { openModal } from "../../modal/modalActions";
@@ -17,15 +16,24 @@ const validate = combineValidators({
   pass: isRequired({ message: "Vui lòng nhập mật khẩu" })
 });
 
-const mapStateToProps = state => ({
-  ownerProfiles: state.register.ownerProfiles,
-  boss: state.form.employee
-});
+const mapStateToProps = state => {
+  var results = state.register.ownerProfiles.map(profile => ({
+    title: profile.email,
+    description: profile.description,
+    payload: profile
+  }));
+
+  return ({
+    boss: state.form.employee,
+    results: results
+  });
+} 
 
 const mapDispatchToProps = {
   createEmployee,
   updateOwnerKeyForEmployee,
-  openModal
+  openModal,
+  searchOwner
 };
 
 class RegEmployeeFrom extends Component {
@@ -35,7 +43,7 @@ class RegEmployeeFrom extends Component {
   }
 
   handleSelect = pos => {
-    this.props.openModal("ConfirmModal", { ownerId: `${pos}` });
+    this.props.openModal("ConfirmModal", { ownerProfile: `${pos}` });
   };
 
   onFormSubmit = values => {
@@ -54,15 +62,19 @@ class RegEmployeeFrom extends Component {
     });
   };
 
-  handleResultSelect = (e, { result }) => this.setState({ value: result.title });
+  handleResultSelect = (e, { result }) => {
+    this.setState({ value: result.title });
+    console.log(result.payload);
+    this.props.openModal("ConfirmModal", { ownerProfile: result.payload });
+  }
 
   handleSearchChange = (e, { value }) => {
     this.setState({value: value})
-    console.log("search");
+    this.props.searchOwner(value);
   }
 
   render() {
-    const { invalid, submitting, pristine, ownerProfiles, value } = this.props;
+    const { invalid, submitting, pristine, value, results } = this.props;
     return (
       <div>
         <Grid>
@@ -116,13 +128,9 @@ class RegEmployeeFrom extends Component {
               onSearchChange={_.debounce(this.handleSearchChange, 500, {
                 leading: true
               })}
-              results={""}
+              results={results}
               value={value}
               {...this.props}
-            />
-            <BossList
-              ownerProfiles={ownerProfiles}
-              handleSelectEvent={this.handleSelect}
             />
           </Grid.Column>
         </Grid>

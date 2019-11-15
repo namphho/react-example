@@ -16,8 +16,8 @@ const mapActionsToProps = {
 
 class RegisterModal extends Component {
   handleConfirmClick = () => {
-    const { ownerId } = this.props;
-    this.props.updateOwnerKeyForEmployee(ownerId);
+    const { ownerProfile } = this.props;
+    this.props.updateOwnerKeyForEmployee(ownerProfile);
   };
 
   handleCancelClick = () => {
@@ -25,11 +25,7 @@ class RegisterModal extends Component {
   };
 
   render() {
-    const { ownerId, ownerProfiles } = this.props;
-    const ownerProfile = ownerProfiles.filter(
-      profiles => profiles.id === ownerId
-    )[0];
-    console.log(`select ownerId ${ownerId}`);
+    const { ownerProfile } = this.props;
     return (
       <Modal size="mini" open={true} onClose={this.props.closeModal}>
         <Modal.Header>Xác nhận Tài Khoản Chủ</Modal.Header>
