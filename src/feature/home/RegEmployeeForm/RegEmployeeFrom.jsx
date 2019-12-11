@@ -123,6 +123,7 @@ class RegEmployeeFrom extends Component {
           <Grid.Column width={6}>
             <h2>Tìm Kiếm Chủ</h2>
             <Search
+              className = 'searchInput'
               loading={false}
               onResultSelect={this.handleResultSelect}
               onSearchChange={_.debounce(this.handleSearchChange, 500, {

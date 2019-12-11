@@ -137,3 +137,7 @@ code {
 .ui.grid>.row>.blue.column {
   color: #000;
 }
+
+.searchInput > div{
+  width: 100%;
+}

@@ -1,5 +1,14 @@
 {
   "projects": {
     "default": "mgxbike"
+  },
+  "targets": {
+    "mgxbike": {
+      "hosting": {
+        "register": [
+          "register2210"
+        ]
+      }
+    }
   }
 }

@@ -73,8 +73,8 @@ class RegBossForm extends Component {
               />
 
               <Field
-                name="email"
                 component={TextInput}
+                name="email"
                 type="text"
                 title="Email"
                 placeholder="A.0938933822@hooray.vn"
